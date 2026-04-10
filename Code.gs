@@ -1,10 +1,17 @@
 // ── Run this function ONCE from the Apps Script editor to authorize Drive + Sheets access ──
 function authorize() {
-  var ss = SpreadsheetApp.openById('1uroUi08Y5G5RscWt11D3JnHzet9wypftFbYgKZHUAio');
-  Logger.log('Sheet: ' + ss.getName());
-  var folder = DriveApp.getFolderById('110QubbCeXeNet5ZbJOz3q96UR4WfXi0S');
-  Logger.log('Folder: ' + folder.getName());
-  Logger.log('Authorization complete — you can now deploy.');
+  try {
+    var ss = SpreadsheetApp.openById('1uroUi08Y5G5RscWt11D3JnHzet9wypftFbYgKZHUAio');
+    Logger.log('SUCCESS — Sheet: ' + ss.getName());
+  } catch (e) {
+    Logger.log('FAILED — Spreadsheet: ' + e.toString());
+  }
+  try {
+    var folder = DriveApp.getFolderById('110QubbCeXeNet5ZbJOz3q96UR4WfXi0S');
+    Logger.log('SUCCESS — Folder: ' + folder.getName());
+  } catch (e) {
+    Logger.log('FAILED — Drive folder: ' + e.toString());
+  }
 }
 
 function doPost(e) {
