@@ -41,10 +41,25 @@ function doPost(e) {
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheets()[0];
 
-    // Data starts at row 5 (row 4 is headers)
-    var lastRow = sheet.getLastRow();
-    var nextRow = Math.max(lastRow + 1, 5);
-    var serialNumber = nextRow - 4;
+    // Count existing data rows (only rows where column B has a name)
+    var dataRange = sheet.getRange('B5:B' + sheet.getMaxRows());
+    var values = dataRange.getValues();
+    var dataRowCount = 0;
+    for (var i = 0; i < values.length; i++) {
+      if (values[i][0] !== '' && values[i][0] !== null) {
+        dataRowCount++;
+      }
+    }
+    var serialNumber = dataRowCount + 1;
+
+    // Find first empty row in column B (starting from row 5)
+    var nextRow = 5;
+    for (var i = 0; i < values.length; i++) {
+      if (values[i][0] === '' || values[i][0] === null) {
+        nextRow = i + 5;
+        break;
+      }
+    }
 
     // Columns: A:#  B:Full Name  C:Year  D:Referred By  E:Mobile  F:Group Size  G:Amount Due  H:Payment Status  I:Notes
     var row = [
@@ -66,6 +81,8 @@ function doPost(e) {
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
+    // Log error for debugging via Executions tab
+    console.error('doPost error: ' + err.toString());
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
