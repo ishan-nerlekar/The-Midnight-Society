@@ -20,7 +20,6 @@ function doPost(e) {
 
     // ── Configuration ──
     var SPREADSHEET_ID = '1uroUi08Y5G5RscWt11D3JnHzet9wypftFbYgKZHUAio';
-    var SHEET_NAME = 'Sheet1';
     var DRIVE_FOLDER_ID = '110QubbCeXeNet5ZbJOz3q96UR4WfXi0S';
 
     // ── Save screenshot to Google Drive ──
@@ -40,7 +39,7 @@ function doPost(e) {
 
     // ── Append row to spreadsheet ──
     var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var sheet = ss.getSheetByName(SHEET_NAME);
+    var sheet = ss.getSheets()[0];
 
     // Data starts at row 5 (row 4 is headers)
     var lastRow = sheet.getLastRow();
