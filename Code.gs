@@ -2,24 +2,8 @@ function doPost(e) {
   var SPREADSHEET_ID = '1uroUi08Y5G5RscWt11D3JnHzet9wypftFbYgKZHUAio';
   var DRIVE_FOLDER_ID = '110QubbCeXeNet5ZbJOz3q96UR4WfXi0S';
 
-  // Debug: write raw postData info to cell K1 so we can see what's arriving
-  try {
-    var debugSheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
-    debugSheet.getRange('K1').setValue('doPost called at ' + new Date().toString());
-    debugSheet.getRange('K2').setValue('postData type: ' + (e.postData ? e.postData.type : 'NO postData'));
-    debugSheet.getRange('K3').setValue('contents length: ' + (e.postData && e.postData.contents ? e.postData.contents.length : 'NONE'));
-  } catch (debugErr) {
-    // ignore debug errors
-  }
-
   try {
     var data = JSON.parse(e.postData.contents);
-
-    // Debug: confirm data parsed
-    try {
-      var debugSheet2 = SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
-      debugSheet2.getRange('K4').setValue('Parsed name: ' + data.name);
-    } catch (x) {}
 
     // ── Save screenshot to Google Drive ──
     var screenshotUrl = '';
@@ -44,6 +28,7 @@ function doPost(e) {
     var nextRow = Math.max(lastRow + 1, 5);
     var serialNumber = nextRow - 4;
 
+    // Columns: A:#  B:Full Name  C:Year  D:Referred By  E:Mobile  F:Group Size  G:Amount Due  H:Payment Status  I:Notes
     var row = [
       serialNumber,
       data.name || '',
@@ -58,21 +43,11 @@ function doPost(e) {
 
     sheet.getRange(nextRow, 1, 1, row.length).setValues([row]);
 
-    // Debug: confirm write
-    try {
-      SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0].getRange('K5').setValue('SUCCESS - wrote to row ' + nextRow);
-    } catch (x) {}
-
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'success', row: nextRow }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
-    // Write error to spreadsheet so we can see it
-    try {
-      SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0].getRange('K5').setValue('ERROR: ' + err.toString());
-    } catch (x) {}
-
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
