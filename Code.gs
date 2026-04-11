@@ -4,11 +4,6 @@ function authorize() {
   Logger.log('Sheet: ' + ss.getName());
   var folder = DriveApp.getFolderById('110QubbCeXeNet5ZbJOz3q96UR4WfXi0S');
   Logger.log('Folder: ' + folder.getName());
-  var testBlob = Utilities.newBlob('test', 'text/plain', 'auth_test.txt');
-  var testFile = folder.createFile(testBlob);
-  testFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  Logger.log('File sharing set OK: ' + testFile.getUrl());
-  DriveApp.getFileById(testFile.getId()).setTrashed(true);
   Logger.log('Authorization complete.');
 }
 
@@ -53,7 +48,7 @@ function doPost(e) {
         );
         var folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
         var file = folder.createFile(blob);
-        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
         var screenshotUrl = file.getUrl();
 
         // Update the row with screenshot info
